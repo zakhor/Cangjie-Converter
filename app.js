@@ -14,7 +14,10 @@ const CANGJIE_RADICALS = {
 // Convert QWERTY code to radical display format
 function formatCangjieCode(qwertyCode) {
   const radicals = qwertyCode.split('').map(char => CANGJIE_RADICALS[char] || char).join('');
-  return `${radicals} (${qwertyCode})`;
+  return {
+    radicals: radicals,
+    qwerty: qwertyCode
+  };
 }
 
 // DOM elements
@@ -123,10 +126,29 @@ function displayResults(data) {
 
         const codeDiv = document.createElement('div');
         codeDiv.className = 'result-code';
+
         if (result.found) {
-            codeDiv.textContent = formatCangjieCode(result.cangjie);
+            const formatted = formatCangjieCode(result.cangjie);
+
+            const radicalsDiv = document.createElement('div');
+            radicalsDiv.className = 'result-code-radicals';
+            radicalsDiv.textContent = formatted.radicals;
+
+            const qwertyDiv = document.createElement('div');
+            qwertyDiv.className = 'result-code-qwerty';
+            qwertyDiv.textContent = formatted.qwerty;
+
+            codeDiv.appendChild(radicalsDiv);
+            codeDiv.appendChild(qwertyDiv);
         } else {
-            codeDiv.textContent = '未找到';
+            const notFoundDiv = document.createElement('div');
+            notFoundDiv.style.flex = '1';
+            notFoundDiv.style.padding = '10px';
+            notFoundDiv.style.display = 'flex';
+            notFoundDiv.style.alignItems = 'center';
+            notFoundDiv.style.justifyContent = 'center';
+            notFoundDiv.textContent = '未找到';
+            codeDiv.appendChild(notFoundDiv);
             row.style.background = '#FFE0E0';
         }
 

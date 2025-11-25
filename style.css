@@ -10,6 +10,8 @@ body {
     padding: 20px;
     color: #000000;
     overflow-y: scroll;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .container {
@@ -18,6 +20,10 @@ body {
     background: white;
     border: 2px solid black;
     padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 header {
@@ -25,6 +31,7 @@ header {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid black;
+    flex-shrink: 0;
 }
 
 h1 {
@@ -41,6 +48,8 @@ header p {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
+    flex: 1;
+    min-height: 0;
 }
 
 .input-column {
@@ -55,6 +64,9 @@ header p {
     border: 2px solid #808080;
     padding: 15px;
     background: #F0F0F0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 label {
@@ -122,11 +134,28 @@ h3 {
     background: #808080;
     color: white;
     border: 1px solid black;
+    flex-shrink: 0;
 }
 
 #results {
     background: white;
     border: 2px solid black;
+    border-right: none;
+    flex: 1;
+    overflow-y: scroll;
+    box-sizing: border-box;
+    position: relative;
+}
+
+#results::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    background: black;
+    pointer-events: none;
 }
 
 .result-row {
@@ -151,11 +180,26 @@ h3 {
 
 .result-code {
     flex: 1;
-    padding: 10px;
+    display: flex;
     font-family: 'Courier New', monospace;
     font-size: 1.2em;
+}
+
+.result-code-radicals {
+    flex: 1;
+    padding: 10px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+}
+
+.result-code-qwerty {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-left: 1px solid black;
 }
 
 footer {
@@ -164,6 +208,7 @@ footer {
     border-top: 2px solid black;
     text-align: center;
     font-size: 0.9em;
+    flex-shrink: 0;
 }
 
 footer p {
