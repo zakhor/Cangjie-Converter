@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倉頡輸入法查詢工具 - Cangjie Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>倉頡輸入法查詢工具</h1>
+            <p>Cangjie (五代倉頡) Input Code Converter</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-column">
+                <label for="inputText">請輸入漢字：</label>
+                <textarea
+                    id="inputText"
+                    rows="10"
+                    placeholder="在此輸入一個或多個漢字，例如：你好世界"
+                    autofocus
+                ></textarea>
+
+                <button id="clearBtn">清除</button>
+
+                <div class="stats-section" id="statsSection" style="visibility: hidden;">
+                    總字數: <span id="totalChars">0</span><br>
+                    已找到: <span id="foundChars">0</span><br>
+                    未找到: <span id="notFoundChars">0</span>
+                </div>
+            </div>
+
+            <div class="results-column">
+                <h3>查詢結果</h3>
+                <div id="results"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>數據來源：<a href="https://github.com/Jackchows/Cangjie5" target="_blank">Jackchows/Cangjie5</a> (MIT License)</p>
+            <p>共收錄 103,602 個漢字的倉頡碼</p>
+            <p>© T.Y. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

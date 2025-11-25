@@ -1,0 +1,22 @@
+{
+  "name": "cangjie-converter",
+  "version": "1.0.0",
+  "description": "Web-based tool to convert Chinese characters to Cangjie (倉頡) input codes",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "parse-data": "node scripts/parse-cangjie-data.js"
+  },
+  "keywords": [
+    "cangjie",
+    "chinese",
+    "input-method",
+    "converter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.0.1"
+  }
+}
