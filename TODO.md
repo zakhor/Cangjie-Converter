@@ -25,6 +25,14 @@
 - [x] スクロールバーによるレイアウトズレを修正（overflow-y: scroll）
 - [x] フッターに著作権表示を追加（© T.Y.）
 
+### 2025-11-25 - GitHub Pages対応（静的版への変換）
+- [x] app.jsをクライアントサイドJSON読み込みに変更
+  - loadCangjieData()関数を追加（ページロード時にdata/cangjie5.jsonを読み込み）
+  - convertText()関数をクライアントサイド処理に変更（/api/convert への依存を削除）
+  - グローバル変数cangjieMapでデータを管理
+- [x] server.jsへの依存を完全に削除（バックエンド不要に）
+- [x] GitHub Pages用の.nojekyllファイルを作成
+
 ## 📋 今後のタスク（未着手）
 (未着手のタスクはありません)
 

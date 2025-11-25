@@ -1,3 +1,6 @@
+// Global variable to store Cangjie data
+let cangjieMap = null;
+
 // Cangjie radical mapping (QWERTY to Chinese radicals)
 const CANGJIE_RADICALS = {
   'q': '手', 'w': '田', 'e': '水', 'r': '口', 't': '廿',
@@ -23,6 +26,24 @@ const totalCharsSpan = document.getElementById('totalChars');
 const foundCharsSpan = document.getElementById('foundChars');
 const notFoundCharsSpan = document.getElementById('notFoundChars');
 
+// Load Cangjie data on page load
+async function loadCangjieData() {
+    try {
+        const response = await fetch('data/cangjie5.json');
+        if (!response.ok) {
+            throw new Error('Failed to load Cangjie data');
+        }
+        cangjieMap = await response.json();
+        console.log(`Loaded ${Object.keys(cangjieMap).length} character mappings`);
+    } catch (error) {
+        console.error('Error loading Cangjie data:', error);
+        alert('無法載入倉頡碼資料庫，請重新整理頁面');
+    }
+}
+
+// Call on page load
+loadCangjieData();
+
 // Event listeners
 clearBtn.addEventListener('click', clearAll);
 
@@ -39,7 +60,7 @@ inputText.addEventListener('input', () => {
 });
 
 // Convert text to Cangjie codes
-async function convertText() {
+function convertText() {
     const text = inputText.value.trim();
 
     if (!text) {
@@ -47,25 +68,37 @@ async function convertText() {
         return;
     }
 
-    try {
-        const response = await fetch('/api/convert', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text })
-        });
+    // Check if data is loaded
+    if (!cangjieMap) {
+        alert('倉頡碼資料庫尚未載入完成，請稍後再試');
+        return;
+    }
 
-        if (!response.ok) {
-            throw new Error('查詢失敗');
+    // Process characters locally
+    const results = [];
+    for (const char of text) {
+        // Skip whitespace
+        if (char.trim() === '') {
+            continue;
         }
 
-        const data = await response.json();
-        displayResults(data);
-    } catch (error) {
-        console.error('Error:', error);
-        alert('查詢時發生錯誤，請稍後再試');
+        const code = cangjieMap[char];
+        results.push({
+            character: char,
+            cangjie: code || null,
+            found: !!code
+        });
     }
+
+    // Create data object matching old API format
+    const data = {
+        results: results,
+        totalCharacters: results.length,
+        foundCount: results.filter(r => r.found).length,
+        notFoundCount: results.filter(r => !r.found).length
+    };
+
+    displayResults(data);
 }
 
 // Display results
