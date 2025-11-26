@@ -1,5 +1,6 @@
-// Global variable to store Cangjie data
+// Global variables to store Cangjie data and conversion map
 let cangjieMap = null;
+let simplifiedTraditionalMap = null;
 
 // Cangjie radical mapping (QWERTY to Chinese radicals)
 const CANGJIE_RADICALS = {
@@ -44,8 +45,48 @@ async function loadCangjieData() {
     }
 }
 
+// Load simplified-traditional conversion map
+async function loadConversionData() {
+    try {
+        const response = await fetch('data/simplified-traditional.json');
+        if (!response.ok) {
+            throw new Error('Failed to load conversion data');
+        }
+        simplifiedTraditionalMap = await response.json();
+        console.log(`Loaded ${Object.keys(simplifiedTraditionalMap.s2t).length} S→T and ${Object.keys(simplifiedTraditionalMap.t2s).length} T→S mappings`);
+    } catch (error) {
+        console.error('Error loading conversion data:', error);
+        // Don't alert - this is optional, will fallback to single character display
+    }
+}
+
+// Get variant character (simplified/traditional)
+function getVariantChar(char) {
+    if (!simplifiedTraditionalMap) return null;
+
+    // Check simplified -> traditional
+    if (simplifiedTraditionalMap.s2t[char]) {
+        return {
+            simplified: char,
+            traditional: simplifiedTraditionalMap.s2t[char]
+        };
+    }
+
+    // Check traditional -> simplified
+    if (simplifiedTraditionalMap.t2s[char]) {
+        return {
+            simplified: simplifiedTraditionalMap.t2s[char],
+            traditional: char
+        };
+    }
+
+    // No variant found
+    return null;
+}
+
 // Call on page load
 loadCangjieData();
+loadConversionData();
 
 // Event listeners
 clearBtn.addEventListener('click', clearAll);
@@ -120,27 +161,96 @@ function displayResults(data) {
         const row = document.createElement('div');
         row.className = 'result-row';
 
-        const charDiv = document.createElement('div');
-        charDiv.className = 'result-char';
-        charDiv.textContent = result.character;
-
-        const codeDiv = document.createElement('div');
-        codeDiv.className = 'result-code';
-
         if (result.found) {
-            const formatted = formatCangjieCode(result.cangjie);
+            const variant = getVariantChar(result.character);
 
-            const radicalsDiv = document.createElement('div');
-            radicalsDiv.className = 'result-code-radicals';
-            radicalsDiv.textContent = formatted.radicals;
+            if (variant) {
+                // Has simplified/traditional variant - show both
+                const simpCode = cangjieMap[variant.simplified];
+                const tradCode = cangjieMap[variant.traditional];
 
-            const qwertyDiv = document.createElement('div');
-            qwertyDiv.className = 'result-code-qwerty';
-            qwertyDiv.textContent = formatted.qwerty;
+                // Simplified character
+                const simpCharDiv = document.createElement('div');
+                simpCharDiv.className = 'result-char-simplified';
+                simpCharDiv.textContent = variant.simplified;
+                row.appendChild(simpCharDiv);
 
-            codeDiv.appendChild(radicalsDiv);
-            codeDiv.appendChild(qwertyDiv);
+                // Simplified code
+                if (simpCode) {
+                    const simpFormatted = formatCangjieCode(simpCode);
+                    const simpRadicalsDiv = document.createElement('div');
+                    simpRadicalsDiv.className = 'result-code-radicals';
+                    simpRadicalsDiv.textContent = simpFormatted.radicals;
+                    row.appendChild(simpRadicalsDiv);
+
+                    const simpQwertyDiv = document.createElement('div');
+                    simpQwertyDiv.className = 'result-code-qwerty';
+                    simpQwertyDiv.textContent = simpFormatted.qwerty;
+                    row.appendChild(simpQwertyDiv);
+                } else {
+                    // Simplified code not found
+                    const notFoundDiv = document.createElement('div');
+                    notFoundDiv.className = 'result-code-notfound';
+                    notFoundDiv.textContent = '未找到';
+                    row.appendChild(notFoundDiv);
+                }
+
+                // Traditional character
+                const tradCharDiv = document.createElement('div');
+                tradCharDiv.className = 'result-char-traditional';
+                tradCharDiv.textContent = variant.traditional;
+                row.appendChild(tradCharDiv);
+
+                // Traditional code
+                if (tradCode) {
+                    const tradFormatted = formatCangjieCode(tradCode);
+                    const tradRadicalsDiv = document.createElement('div');
+                    tradRadicalsDiv.className = 'result-code-radicals';
+                    tradRadicalsDiv.textContent = tradFormatted.radicals;
+                    row.appendChild(tradRadicalsDiv);
+
+                    const tradQwertyDiv = document.createElement('div');
+                    tradQwertyDiv.className = 'result-code-qwerty';
+                    tradQwertyDiv.textContent = tradFormatted.qwerty;
+                    row.appendChild(tradQwertyDiv);
+                } else {
+                    // Traditional code not found
+                    const notFoundDiv = document.createElement('div');
+                    notFoundDiv.className = 'result-code-notfound';
+                    notFoundDiv.textContent = '未找到';
+                    row.appendChild(notFoundDiv);
+                }
+            } else {
+                // No variant - show single character (original behavior)
+                const charDiv = document.createElement('div');
+                charDiv.className = 'result-char';
+                charDiv.textContent = result.character;
+                row.appendChild(charDiv);
+
+                const formatted = formatCangjieCode(result.cangjie);
+
+                const radicalsDiv = document.createElement('div');
+                radicalsDiv.className = 'result-code-radicals';
+                radicalsDiv.textContent = formatted.radicals;
+                row.appendChild(radicalsDiv);
+
+                const qwertyDiv = document.createElement('div');
+                qwertyDiv.className = 'result-code-qwerty';
+                qwertyDiv.textContent = formatted.qwerty;
+                row.appendChild(qwertyDiv);
+
+                // Add empty spacer to fill remaining 50%
+                const spacerDiv = document.createElement('div');
+                spacerDiv.className = 'result-code-spacer';
+                row.appendChild(spacerDiv);
+            }
         } else {
+            // Character not found in Cangjie database
+            const charDiv = document.createElement('div');
+            charDiv.className = 'result-char';
+            charDiv.textContent = result.character;
+            row.appendChild(charDiv);
+
             const notFoundDiv = document.createElement('div');
             notFoundDiv.style.flex = '1';
             notFoundDiv.style.padding = '10px';
@@ -148,12 +258,10 @@ function displayResults(data) {
             notFoundDiv.style.alignItems = 'center';
             notFoundDiv.style.justifyContent = 'center';
             notFoundDiv.textContent = '未找到';
-            codeDiv.appendChild(notFoundDiv);
+            row.appendChild(notFoundDiv);
             row.style.background = '#FFE0E0';
         }
 
-        row.appendChild(charDiv);
-        row.appendChild(codeDiv);
         resultsDiv.appendChild(row);
     });
 }
