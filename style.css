@@ -165,13 +165,45 @@ h3 {
 }
 
 .result-char {
-    flex: 0 0 80px;
+    flex: 0 0 10%;
     padding: 10px;
     font-size: 2em;
     font-weight: bold;
     border-right: 1px solid black;
     text-align: center;
     background: #F0F0F0;
+}
+
+.result-char-simplified {
+    flex: 0 0 10%;
+    padding: 10px;
+    font-size: 2em;
+    font-weight: bold;
+    border-right: 1px solid black;
+    text-align: center;
+    background: #F0F0F0;
+}
+
+.result-char-traditional {
+    flex: 0 0 10%;
+    padding: 10px;
+    font-size: 2em;
+    font-weight: bold;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    text-align: center;
+    background: #F0F0F0;
+}
+
+.result-code-notfound {
+    flex: 0 0 40%;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #808080;
 }
 
 .result-code {
@@ -182,7 +214,7 @@ h3 {
 }
 
 .result-code-radicals {
-    flex: 1;
+    flex: 0 0 20%;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -190,11 +222,16 @@ h3 {
 }
 
 .result-code-qwerty {
-    flex: 1;
+    flex: 0 0 20%;
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    border-left: 1px solid black;
+}
+
+.result-code-spacer {
+    flex: 0 0 50%;
     border-left: 1px solid black;
 }
 
@@ -233,7 +270,9 @@ footer a:hover {
         flex: 1;
     }
 
-    .result-char {
+    .result-char,
+    .result-char-simplified,
+    .result-char-traditional {
         font-size: 1.5em;
     }
 
