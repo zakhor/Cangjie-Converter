@@ -33,8 +33,25 @@
 - [x] server.jsへの依存を完全に削除（バックエンド不要に）
 - [x] GitHub Pages用の.nojekyllファイルを作成
 
+### 2025-11-26 - 簡体字・繁体字の両方の倉頡コードを並べて表示する機能
+- [x] generate-conversion-map.jsを作成（OpenCCデータから簡繁変換マッピングJSONを生成）
+  - OpenCC STCharacters.txt, TSCharacters.txt をダウンロード
+  - cangjie5.jsonに含まれる文字のみにフィルタリング
+  - data/simplified-traditional.jsonを生成（3870 S→T, 4104 T→S mappings）
+  - 手動修正: 查→査 マッピングを追加（OpenCCデータに欠落していたため）
+- [x] app.jsにloadConversionData()関数を追加（data/simplified-traditional.jsonを読み込み）
+- [x] app.jsにgetVariantChar()関数を追加（簡繁の対応を検出）
+- [x] displayResults関数を2列表示に対応
+  - 簡繁の区別がある場合: 左側に簡体字とコード、右側に繁体字とコード
+  - 簡繁の区別がない場合: 従来通り1列のみ表示
+- [x] style.cssに新しいCSSクラスを追加
+  - .result-char-simplified, .result-char-traditional
+  - .result-code-notfound（倉頡コードが見つからない場合）
+- [x] 簡繁の区別がない行の罫線位置を調整
+  - .result-code-qwertyをflex: 1からflex: 3に変更し、罫線位置を揃える
+
 ## 📋 今後のタスク（未着手）
-(未着手のタスクはありません)
+(今後のタスクはありません)
 
 ## 🐛 既知の問題
 (既知の問題はありません)
@@ -43,4 +60,4 @@
 (改善提案はありません)
 
 ---
-**最終更新:** 2025-11-25
+**最終更新:** 2025-11-26
