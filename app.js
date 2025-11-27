@@ -264,6 +264,9 @@ function displayResults(data) {
 
         resultsDiv.appendChild(row);
     });
+
+    // Auto-scroll to bottom after adding new results
+    resultsDiv.scrollTop = resultsDiv.scrollHeight;
 }
 
 // Clear all
