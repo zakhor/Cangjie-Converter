@@ -126,11 +126,11 @@ function convertText() {
             continue;
         }
 
-        const code = cangjieMap[char];
+        const codes = cangjieMap[char];
         results.push({
             character: char,
-            cangjie: code || null,
-            found: !!code
+            cangjie: codes || null,
+            found: !!codes
         });
     }
 
@@ -147,6 +147,9 @@ function convertText() {
 
 // Display results
 function displayResults(data) {
+    // Cache results for expand/collapse functionality
+    convertText.cachedResults = data.results;
+
     // Update stats
     totalCharsSpan.textContent = data.totalCharacters;
     foundCharsSpan.textContent = data.foundCount;
@@ -157,17 +160,18 @@ function displayResults(data) {
     resultsDiv.innerHTML = '';
 
     // Create result rows
-    data.results.forEach(result => {
+    data.results.forEach((result, index) => {
         const row = document.createElement('div');
         row.className = 'result-row';
+        row.dataset.index = index;
 
         if (result.found) {
             const variant = getVariantChar(result.character);
 
             if (variant) {
                 // Has simplified/traditional variant - show both
-                const simpCode = cangjieMap[variant.simplified];
-                const tradCode = cangjieMap[variant.traditional];
+                const simpCodes = cangjieMap[variant.simplified];
+                const tradCodes = cangjieMap[variant.traditional];
 
                 // Simplified character
                 const simpCharDiv = document.createElement('div');
@@ -175,9 +179,9 @@ function displayResults(data) {
                 simpCharDiv.textContent = variant.simplified;
                 row.appendChild(simpCharDiv);
 
-                // Simplified code
-                if (simpCode) {
-                    const simpFormatted = formatCangjieCode(simpCode);
+                // Simplified code (primary only)
+                if (simpCodes && simpCodes.length > 0) {
+                    const simpFormatted = formatCangjieCode(simpCodes[0]);
                     const simpRadicalsDiv = document.createElement('div');
                     simpRadicalsDiv.className = 'result-code-radicals';
                     simpRadicalsDiv.textContent = simpFormatted.radicals;
@@ -186,6 +190,13 @@ function displayResults(data) {
                     const simpQwertyDiv = document.createElement('div');
                     simpQwertyDiv.className = 'result-code-qwerty';
                     simpQwertyDiv.textContent = simpFormatted.qwerty;
+
+                    // Add asterisk if multiple codes exist
+                    if (simpCodes.length > 1) {
+                        const asterisk = createAsteriskWithTooltip(simpCodes);
+                        simpQwertyDiv.appendChild(asterisk);
+                    }
+
                     row.appendChild(simpQwertyDiv);
                 } else {
                     // Simplified code not found
@@ -201,9 +212,9 @@ function displayResults(data) {
                 tradCharDiv.textContent = variant.traditional;
                 row.appendChild(tradCharDiv);
 
-                // Traditional code
-                if (tradCode) {
-                    const tradFormatted = formatCangjieCode(tradCode);
+                // Traditional code (primary only)
+                if (tradCodes && tradCodes.length > 0) {
+                    const tradFormatted = formatCangjieCode(tradCodes[0]);
                     const tradRadicalsDiv = document.createElement('div');
                     tradRadicalsDiv.className = 'result-code-radicals';
                     tradRadicalsDiv.textContent = tradFormatted.radicals;
@@ -212,6 +223,13 @@ function displayResults(data) {
                     const tradQwertyDiv = document.createElement('div');
                     tradQwertyDiv.className = 'result-code-qwerty';
                     tradQwertyDiv.textContent = tradFormatted.qwerty;
+
+                    // Add asterisk if multiple codes exist
+                    if (tradCodes.length > 1) {
+                        const asterisk = createAsteriskWithTooltip(tradCodes);
+                        tradQwertyDiv.appendChild(asterisk);
+                    }
+
                     row.appendChild(tradQwertyDiv);
                 } else {
                     // Traditional code not found
@@ -221,13 +239,14 @@ function displayResults(data) {
                     row.appendChild(notFoundDiv);
                 }
             } else {
-                // No variant - show single character (original behavior)
+                // No variant - show single character
                 const charDiv = document.createElement('div');
                 charDiv.className = 'result-char';
                 charDiv.textContent = result.character;
                 row.appendChild(charDiv);
 
-                const formatted = formatCangjieCode(result.cangjie);
+                const codes = result.cangjie;
+                const formatted = formatCangjieCode(codes[0]);
 
                 const radicalsDiv = document.createElement('div');
                 radicalsDiv.className = 'result-code-radicals';
@@ -237,6 +256,13 @@ function displayResults(data) {
                 const qwertyDiv = document.createElement('div');
                 qwertyDiv.className = 'result-code-qwerty';
                 qwertyDiv.textContent = formatted.qwerty;
+
+                // Add asterisk if multiple codes exist
+                if (codes.length > 1) {
+                    const asterisk = createAsteriskWithTooltip(codes);
+                    qwertyDiv.appendChild(asterisk);
+                }
+
                 row.appendChild(qwertyDiv);
 
                 // Add empty spacer to fill remaining 50%
@@ -275,4 +301,25 @@ function clearAll() {
     resultsDiv.innerHTML = '';
     statsSection.style.visibility = 'hidden';
     inputText.focus();
+}
+
+// Create asterisk with tooltip showing all Cangjie codes
+function createAsteriskWithTooltip(codes) {
+    const asterisk = document.createElement('span');
+    asterisk.className = 'code-asterisk';
+    asterisk.textContent = ' *';
+
+    // Create tooltip content
+    let tooltipText = '';
+    for (let i = 0; i < codes.length; i++) {
+        const formatted = formatCangjieCode(codes[i]);
+        tooltipText += `${formatted.radicals} (${formatted.qwerty})`;
+        if (i < codes.length - 1) {
+            tooltipText += '\n';
+        }
+    }
+
+    asterisk.setAttribute('title', tooltipText);
+
+    return asterisk;
 }

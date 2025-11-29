@@ -160,8 +160,11 @@ h3 {
 
 .result-row {
     display: flex;
+    flex-wrap: wrap;
     border-bottom: 1px solid black;
     background: white;
+    min-height: 60px;
+    align-items: stretch;
 }
 
 .result-char {
@@ -233,6 +236,18 @@ h3 {
 .result-code-spacer {
     flex: 0 0 50%;
     border-left: 1px solid black;
+}
+
+.code-asterisk {
+    color: #FF0000;
+    font-weight: bold;
+    font-size: 1.4em;
+    cursor: help;
+    margin-left: 5px;
+}
+
+.code-asterisk:hover {
+    color: #CC0000;
 }
 
 footer {

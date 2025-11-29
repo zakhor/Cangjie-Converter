@@ -38,9 +38,11 @@ for (const line of lines) {
     const char = parts[0].trim();
     const code = parts[1].trim();
 
-    // Store in map (if duplicate, keep the first occurrence)
+    // Store in map (support multiple codes per character)
     if (!cangjieMap[char]) {
-        cangjieMap[char] = code;
+        cangjieMap[char] = [code];
+    } else {
+        cangjieMap[char].push(code);
     }
 }
 
