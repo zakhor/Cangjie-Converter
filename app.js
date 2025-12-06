@@ -161,31 +161,39 @@ function displayResults(data) {
 
     // Create result rows
     data.results.forEach((result, index) => {
-        const row = document.createElement('div');
-        row.className = 'result-row';
-        row.dataset.index = index;
-
         if (result.found) {
             const variant = getVariantChar(result.character);
 
             if (variant) {
-                // Has simplified/traditional variant - show both
+                // Has simplified/traditional variant - show both in 2 rows
                 const simpCodes = cangjieMap[variant.simplified];
                 const tradCodes = cangjieMap[variant.traditional];
 
-                // Simplified character
+                // Create group container
+                const group = document.createElement('div');
+                group.className = 'result-group';
+                group.dataset.index = index;
+
+                // Simplified row
+                const simpRow = document.createElement('div');
+                simpRow.className = 'result-row';
+
                 const simpCharDiv = document.createElement('div');
-                simpCharDiv.className = 'result-char-simplified';
+                simpCharDiv.className = 'result-char';
                 simpCharDiv.textContent = variant.simplified;
-                row.appendChild(simpCharDiv);
+                simpRow.appendChild(simpCharDiv);
 
                 // Simplified code (primary only)
                 if (simpCodes && simpCodes.length > 0) {
                     const simpFormatted = formatCangjieCode(simpCodes[0]);
+
+                    const simpCodeDiv = document.createElement('div');
+                    simpCodeDiv.className = 'result-code';
+
                     const simpRadicalsDiv = document.createElement('div');
                     simpRadicalsDiv.className = 'result-code-radicals';
                     simpRadicalsDiv.textContent = simpFormatted.radicals;
-                    row.appendChild(simpRadicalsDiv);
+                    simpCodeDiv.appendChild(simpRadicalsDiv);
 
                     const simpQwertyDiv = document.createElement('div');
                     simpQwertyDiv.className = 'result-code-qwerty';
@@ -197,28 +205,38 @@ function displayResults(data) {
                         simpQwertyDiv.appendChild(asterisk);
                     }
 
-                    row.appendChild(simpQwertyDiv);
+                    simpCodeDiv.appendChild(simpQwertyDiv);
+                    simpRow.appendChild(simpCodeDiv);
                 } else {
                     // Simplified code not found
                     const notFoundDiv = document.createElement('div');
                     notFoundDiv.className = 'result-code-notfound';
                     notFoundDiv.textContent = '未找到';
-                    row.appendChild(notFoundDiv);
+                    simpRow.appendChild(notFoundDiv);
                 }
 
-                // Traditional character
+                group.appendChild(simpRow);
+
+                // Traditional row
+                const tradRow = document.createElement('div');
+                tradRow.className = 'result-row';
+
                 const tradCharDiv = document.createElement('div');
-                tradCharDiv.className = 'result-char-traditional';
+                tradCharDiv.className = 'result-char';
                 tradCharDiv.textContent = variant.traditional;
-                row.appendChild(tradCharDiv);
+                tradRow.appendChild(tradCharDiv);
 
                 // Traditional code (primary only)
                 if (tradCodes && tradCodes.length > 0) {
                     const tradFormatted = formatCangjieCode(tradCodes[0]);
+
+                    const tradCodeDiv = document.createElement('div');
+                    tradCodeDiv.className = 'result-code';
+
                     const tradRadicalsDiv = document.createElement('div');
                     tradRadicalsDiv.className = 'result-code-radicals';
                     tradRadicalsDiv.textContent = tradFormatted.radicals;
-                    row.appendChild(tradRadicalsDiv);
+                    tradCodeDiv.appendChild(tradRadicalsDiv);
 
                     const tradQwertyDiv = document.createElement('div');
                     tradQwertyDiv.className = 'result-code-qwerty';
@@ -230,16 +248,24 @@ function displayResults(data) {
                         tradQwertyDiv.appendChild(asterisk);
                     }
 
-                    row.appendChild(tradQwertyDiv);
+                    tradCodeDiv.appendChild(tradQwertyDiv);
+                    tradRow.appendChild(tradCodeDiv);
                 } else {
                     // Traditional code not found
                     const notFoundDiv = document.createElement('div');
                     notFoundDiv.className = 'result-code-notfound';
                     notFoundDiv.textContent = '未找到';
-                    row.appendChild(notFoundDiv);
+                    tradRow.appendChild(notFoundDiv);
                 }
+
+                group.appendChild(tradRow);
+                resultsDiv.appendChild(group);
             } else {
-                // No variant - show single character
+                // No variant - show single character in 1 row
+                const row = document.createElement('div');
+                row.className = 'result-row';
+                row.dataset.index = index;
+
                 const charDiv = document.createElement('div');
                 charDiv.className = 'result-char';
                 charDiv.textContent = result.character;
@@ -248,10 +274,13 @@ function displayResults(data) {
                 const codes = result.cangjie;
                 const formatted = formatCangjieCode(codes[0]);
 
+                const codeDiv = document.createElement('div');
+                codeDiv.className = 'result-code';
+
                 const radicalsDiv = document.createElement('div');
                 radicalsDiv.className = 'result-code-radicals';
                 radicalsDiv.textContent = formatted.radicals;
-                row.appendChild(radicalsDiv);
+                codeDiv.appendChild(radicalsDiv);
 
                 const qwertyDiv = document.createElement('div');
                 qwertyDiv.className = 'result-code-qwerty';
@@ -263,32 +292,30 @@ function displayResults(data) {
                     qwertyDiv.appendChild(asterisk);
                 }
 
-                row.appendChild(qwertyDiv);
+                codeDiv.appendChild(qwertyDiv);
+                row.appendChild(codeDiv);
 
-                // Add empty spacer to fill remaining 50%
-                const spacerDiv = document.createElement('div');
-                spacerDiv.className = 'result-code-spacer';
-                row.appendChild(spacerDiv);
+                resultsDiv.appendChild(row);
             }
         } else {
             // Character not found in Cangjie database
+            const row = document.createElement('div');
+            row.className = 'result-row';
+            row.dataset.index = index;
+
             const charDiv = document.createElement('div');
             charDiv.className = 'result-char';
             charDiv.textContent = result.character;
             row.appendChild(charDiv);
 
             const notFoundDiv = document.createElement('div');
-            notFoundDiv.style.flex = '1';
-            notFoundDiv.style.padding = '10px';
-            notFoundDiv.style.display = 'flex';
-            notFoundDiv.style.alignItems = 'center';
-            notFoundDiv.style.justifyContent = 'center';
+            notFoundDiv.className = 'result-code-notfound';
             notFoundDiv.textContent = '未找到';
             row.appendChild(notFoundDiv);
             row.style.background = '#FFE0E0';
-        }
 
-        resultsDiv.appendChild(row);
+            resultsDiv.appendChild(row);
+        }
     });
 
     // Auto-scroll to bottom after adding new results

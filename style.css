@@ -144,23 +144,30 @@ h3 {
     flex: 1;
     overflow-y: scroll;
     box-sizing: border-box;
-    position: relative;
 }
 
-#results::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 2px;
-    background: black;
-    pointer-events: none;
+#results::-webkit-scrollbar {
+    width: 16px;
+    background: #F0F0F0;
+    border-left: 2px solid black;
+}
+
+#results::-webkit-scrollbar-thumb {
+    background: #C0C0C0;
+    border: 2px solid #808080;
+    border-radius: 0;
+}
+
+#results::-webkit-scrollbar-thumb:hover {
+    background: #A0A0A0;
+}
+
+.result-group {
+    /* Container for simplified/traditional pair */
 }
 
 .result-row {
     display: flex;
-    flex-wrap: wrap;
     border-bottom: 1px solid black;
     background: white;
     min-height: 60px;
@@ -168,38 +175,20 @@ h3 {
 }
 
 .result-char {
-    flex: 0 0 10%;
+    flex: 0 0 15%;
     padding: 10px;
     font-size: 2em;
     font-weight: bold;
     border-right: 1px solid black;
     text-align: center;
     background: #F0F0F0;
-}
-
-.result-char-simplified {
-    flex: 0 0 10%;
-    padding: 10px;
-    font-size: 2em;
-    font-weight: bold;
-    border-right: 1px solid black;
-    text-align: center;
-    background: #F0F0F0;
-}
-
-.result-char-traditional {
-    flex: 0 0 10%;
-    padding: 10px;
-    font-size: 2em;
-    font-weight: bold;
-    border-right: 1px solid black;
-    border-left: 1px solid black;
-    text-align: center;
-    background: #F0F0F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .result-code-notfound {
-    flex: 0 0 40%;
+    flex: 1;
     padding: 10px;
     font-family: 'Courier New', monospace;
     font-size: 1.2em;
@@ -217,7 +206,7 @@ h3 {
 }
 
 .result-code-radicals {
-    flex: 0 0 20%;
+    flex: 1;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -225,16 +214,11 @@ h3 {
 }
 
 .result-code-qwerty {
-    flex: 0 0 20%;
+    flex: 1;
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    border-left: 1px solid black;
-}
-
-.result-code-spacer {
-    flex: 0 0 50%;
     border-left: 1px solid black;
 }
 
@@ -285,9 +269,7 @@ footer a:hover {
         flex: 1;
     }
 
-    .result-char,
-    .result-char-simplified,
-    .result-char-traditional {
+    .result-char {
         font-size: 1.5em;
     }
 
