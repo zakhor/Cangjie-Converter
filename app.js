@@ -330,11 +330,11 @@ function clearAll() {
     inputText.focus();
 }
 
-// Create asterisk with tooltip showing all Cangjie codes
+// Create indicator with tooltip showing all Cangjie codes
 function createAsteriskWithTooltip(codes) {
-    const asterisk = document.createElement('span');
-    asterisk.className = 'code-asterisk';
-    asterisk.textContent = ' *';
+    const indicator = document.createElement('span');
+    indicator.className = 'code-asterisk';
+    indicator.textContent = ' 多';
 
     // Create tooltip content
     let tooltipText = '';
@@ -346,7 +346,7 @@ function createAsteriskWithTooltip(codes) {
         }
     }
 
-    asterisk.setAttribute('title', tooltipText);
+    indicator.setAttribute('title', tooltipText);
 
-    return asterisk;
+    return indicator;
 }
