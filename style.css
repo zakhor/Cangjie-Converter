@@ -175,7 +175,7 @@ h3 {
 }
 
 .result-char {
-    flex: 0 0 15%;
+    flex: 0 0 10%;
     padding: 10px;
     font-size: 2em;
     font-weight: bold;
